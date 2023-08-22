@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line copy 4.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: peters <peters@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by peters            #+#    #+#             */
-/*   Updated: 2023/08/21 09:37:05 by peters           ###   ########.fr       */
+/*   Updated: 2023/08/20 20:23:17 by peters           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	*get_next_line(int fd)
 	char		buff[BUFFER_SIZE];
 	char		*dirty_line;
 	char		*clean_line;
-	static char	*dirt;
+	static char	*dirt = NULL;
 	int			bytes_read;
 	int			i;
 	int			j;
@@ -36,12 +36,9 @@ char	*get_next_line(int fd)
 		else if (bytes_read == 0)
 			break ;
 		else
-		{
-			buff[bytes_read] = '\0';
 			dirty_line = ft_strjoin(dirty_line, buff);
-		}
 	}
-	if (bytes_read == 0 && !dirt)
+	if (bytes_read == 0 && !ft_strchr(dirty_line, '\n') && !dirt)
 	{
 		free(dirty_line);
 		return (NULL);
@@ -54,11 +51,13 @@ char	*get_next_line(int fd)
 	}
 	if (dirty_line[i] == '\n')
 		clean_line[i++] = '\n';
-	free(dirt);
-	if (dirty_line[i] != '\0')
-		dirt = ft_strdup(&dirty_line[i]);
-	else
-		dirt = NULL;
+	dirt = ft_calloc(1, ft_strlen(dirty_line) - i + 1);
+	j = 0;
+	while (dirty_line[i + j] != '\0')
+	{
+		dirt[j] = dirty_line[i + j];
+		j++;
+	}
 	return (clean_line);
 }
 
@@ -177,7 +176,7 @@ int	main(void)
 
 	i = 0;
 	fd = open("teste.txt", O_RDONLY);
-	while (i < 20)
+	while (i < 15)
 	{
 		printf("gnl %i: %s", i, get_next_line(fd));
 		i++;

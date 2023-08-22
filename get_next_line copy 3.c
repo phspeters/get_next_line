@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line copy 3.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: peters <peters@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by peters            #+#    #+#             */
-/*   Updated: 2023/08/21 09:37:05 by peters           ###   ########.fr       */
+/*   Updated: 2023/08/17 19:58:19 by peters           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,17 @@ char	*get_next_line(int fd)
 	char		buff[BUFFER_SIZE];
 	char		*dirty_line;
 	char		*clean_line;
-	static char	*dirt;
+	static char	*dirt = NULL;
 	int			bytes_read;
 	int			i;
 	int			j;
 
 	i = 0;
+	dirty_line = ft_calloc(1, 1);
 	if (dirt)
-		dirty_line = ft_strdup(dirt);
-	else
-		dirty_line = ft_calloc(1, 1);
+	{
+		dirty_line = ft_strjoin(dirt, dirty_line);
+	}
 	while (!ft_strchr(dirty_line, '\n'))
 	{
 		bytes_read = read(fd, buff, BUFFER_SIZE);
@@ -36,15 +37,7 @@ char	*get_next_line(int fd)
 		else if (bytes_read == 0)
 			break ;
 		else
-		{
-			buff[bytes_read] = '\0';
 			dirty_line = ft_strjoin(dirty_line, buff);
-		}
-	}
-	if (bytes_read == 0 && !dirt)
-	{
-		free(dirty_line);
-		return (NULL);
 	}
 	clean_line = ft_calloc(1, ft_strlen(dirty_line));
 	while (dirty_line[i] != '\n' && dirty_line[i] != '\0')
@@ -54,44 +47,19 @@ char	*get_next_line(int fd)
 	}
 	if (dirty_line[i] == '\n')
 		clean_line[i++] = '\n';
-	free(dirt);
-	if (dirty_line[i] != '\0')
-		dirt = ft_strdup(&dirty_line[i]);
-	else
-		dirt = NULL;
+	dirt = ft_strdup(dirty_line + i);
+	j = 0;
+	while (dirty_line[i + j] != '\0')
+	{
+		dirt[j] = dirty_line[i + j];
+		j++;
+	}
+	if (*clean_line == '\0')
+		return (NULL);
 	return (clean_line);
 }
 
 /////////////////////////////////////////////////////////
-
-char	*ft_strdup(const char *s)
-{
-	char	*dup;
-	int		s_size;
-
-	s_size = ft_strlen((char *)s) + 1;
-	dup = malloc(sizeof(char) * s_size);
-	if (dup == NULL)
-		return (NULL);
-	dup = ft_memcpy(dup, s, s_size);
-	return (dup);
-}
-
-void	*ft_memcpy(void *dest, const void *src, size_t n)
-{
-	size_t	i;
-
-	if (dest == NULL && src == NULL)
-		return (NULL);
-	i = 0;
-	while (i < n)
-	{
-		((unsigned char *)dest)[i] = ((unsigned char *)src)[i];
-		i++;
-	}
-	return (dest);
-}
-
 void	*ft_calloc(size_t nmemb, size_t size)
 {
 	void	*alloc;
@@ -173,11 +141,10 @@ char	*ft_strchr(const char *s, int c)
 int	main(void)
 {
 	int	fd;
-	int	i;
+	int	i = 0;
 
-	i = 0;
 	fd = open("teste.txt", O_RDONLY);
-	while (i < 20)
+	while (i < 10)
 	{
 		printf("gnl %i: %s", i, get_next_line(fd));
 		i++;
