@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by peters            #+#    #+#             */
-/*   Updated: 2023/08/22 12:30:42 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/22 12:28:08 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ char	*get_next_line(int fd)
 	static char	*dirt;
 	int			bytes_read;
 	int			i;
+	char 		*temp;
 
 	i = 0;
 	if (dirt)
@@ -37,7 +38,9 @@ char	*get_next_line(int fd)
 		else
 		{
 			buff[bytes_read] = '\0';
+			temp = dirty_line;
 			dirty_line = ft_strjoin(dirty_line, buff);
+			free(temp);
 		}
 	}
 	if (bytes_read == 0 && !dirt)
@@ -53,13 +56,15 @@ char	*get_next_line(int fd)
 	}
 	if (dirty_line[i] == '\n')
 		clean_line[i++] = '\n';
-	free(dirt);
 	if (dirty_line[i] != '\0')
+	{
 		dirt = ft_strdup(&dirty_line[i]);
+	}
 	else
 	{
 		clean_line[i] = '\0';
 		dirt = NULL;
 	}
+	free(dirty_line);
 	return (clean_line);
 }

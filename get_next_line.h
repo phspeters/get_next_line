@@ -3,17 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: peters <peters@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 14:59:49 by peters            #+#    #+#             */
-/*   Updated: 2023/08/20 12:42:07 by peters           ###   ########.fr       */
+/*   Updated: 2023/08/22 10:49:35 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# define BUFFER_SIZE 4
+#ifndef BUFFER_SIZE
+# define BUFFER_SIZE 10
+#endif
 
 # include <fcntl.h>
 # include <sys/stat.h>
