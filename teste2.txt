@@ -1,8 +1,0 @@
-A primeira linha vai ser um monte de aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa e depois um newline
-Vamos testar uma string grande para ver
-lalalalalalalalla
-lalalalalalalalla
-se a funcao ja consegue devolver a next line ou vai dar 
-lalalalalalalalla
-lalalalalalalalla
-merda
