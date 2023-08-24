@@ -6,13 +6,14 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/24 11:57:27 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/24 13:43:39 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
+//remember to use static functions before push
 char	*get_next_line(int fd)
 {
 	char		*buff;
@@ -35,7 +36,7 @@ char	*get_next_line(int fd)
 	return (next_line);
 }
 
-static char	*initialize_and_check_errors(int fd, char **remaining_line,
+char	*initialize_and_check_errors(int fd, char **remaining_line,
 		char **buff, int *bytes_read)
 {
 	char	*line_read;
@@ -52,7 +53,7 @@ static char	*initialize_and_check_errors(int fd, char **remaining_line,
 	return (line_read);
 }
 
-static int	*read_from_file(int fd, char **line_read, char *buff,
+int	*read_from_file(int fd, char **line_read, char *buff,
 		int *bytes_read)
 {
 	char	*temp;
@@ -75,7 +76,7 @@ static int	*read_from_file(int fd, char **line_read, char *buff,
 	return (bytes_read);
 }
 
-static int	handle_end_of_file(char *line_read, int *bytes_read)
+int	handle_end_of_file(char *line_read, int *bytes_read)
 {
 	if (*bytes_read == 0 && *line_read == '\0')
 	{
@@ -85,7 +86,7 @@ static int	handle_end_of_file(char *line_read, int *bytes_read)
 	return (*bytes_read);
 }
 
-static char	*create_next_line(char *line_read, char **remaining_line)
+char	*create_next_line(char *line_read, char **remaining_line)
 {
 	int		i;
 	char	*next_line;
