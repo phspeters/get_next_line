@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: peters <peters@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/23 21:38:40 by peters           ###   ########.fr       */
+/*   Updated: 2023/08/23 21:27:19 by peters           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ char	*get_next_line(int fd)
 	char		*buff;
 	char		*dirty_line;
 	char		*clean_line;
-	static char	*dirt;
+	static char	*dirt[1024];
 	int			bytes_read;
 
-	dirty_line = initialize_and_check_errors(fd, &dirt, &buff, &bytes_read);
+	dirty_line = initialize_and_check_errors(fd, &dirt[fd], &buff, &bytes_read);
 	if (dirty_line == NULL)
 		return (NULL);
 	if (read_from_file(fd, &dirty_line, buff, &bytes_read) == NULL)
@@ -29,7 +29,7 @@ char	*get_next_line(int fd)
 	bytes_read = handle_end_of_file(dirty_line, &bytes_read);
 	if (bytes_read < 0)
 		return (NULL);
-	clean_line = create_clean_line(dirty_line, &dirt);
+	clean_line = create_clean_line(dirty_line, &dirt[fd]);
 	free(dirty_line);
 	return (clean_line);
 }
@@ -42,7 +42,7 @@ char	*initialize_and_check_errors(int fd, char **dirt, char **buff,
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	*bytes_read = BUFFER_SIZE;
-	if ((*dirt) == NULL)
+	if (!(*dirt))
 		*dirt = ft_strdup("");
 	dirty_line = ft_strdup(*dirt);
 	free(*dirt);
