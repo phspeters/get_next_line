@@ -6,12 +6,11 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/24 13:43:57 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/24 18:21:17 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-#include <stdio.h>
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
@@ -27,7 +26,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (read_from_file(fd, &line_read, buff, &bytes_read) == NULL)
 		return (NULL);
-	bytes_read = handle_end_of_file(line_read, &bytes_read);
+	handle_end_of_file(line_read, &bytes_read);
 	if (bytes_read < 0)
 		return (NULL);
 	next_line = create_next_line(line_read, &remaining_line[fd]);
@@ -75,14 +74,13 @@ int	*read_from_file(int fd, char **line_read, char *buff,
 	return (bytes_read);
 }
 
-int	handle_end_of_file(char *line_read, int *bytes_read)
+void	handle_end_of_file(char *line_read, int *bytes_read)
 {
 	if (*bytes_read == 0 && *line_read == '\0')
 	{
 		free(line_read);
-		return (-1);
+		*bytes_read = -1;
 	}
-	return (*bytes_read);
 }
 
 char	*create_next_line(char *line_read, char **remaining_line)
@@ -101,7 +99,5 @@ char	*create_next_line(char *line_read, char **remaining_line)
 		next_line[i++] = '\n';
 	if (line_read[i] != '\0')
 		*remaining_line = ft_strdup(&line_read[i]);
-	else
-		next_line[i] = '\0';
 	return (next_line);
 }
