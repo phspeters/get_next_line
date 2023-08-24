@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: peters <peters@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/23 21:38:40 by peters           ###   ########.fr       */
+/*   Updated: 2023/08/24 11:57:27 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,90 +16,92 @@
 char	*get_next_line(int fd)
 {
 	char		*buff;
-	char		*dirty_line;
-	char		*clean_line;
-	static char	*dirt;
+	char		*line_read;
+	char		*next_line;
+	static char	*remaining_line;
 	int			bytes_read;
 
-	dirty_line = initialize_and_check_errors(fd, &dirt, &buff, &bytes_read);
-	if (dirty_line == NULL)
+	line_read = initialize_and_check_errors(fd, &remaining_line, &buff,
+			&bytes_read);
+	if (line_read == NULL)
 		return (NULL);
-	if (read_from_file(fd, &dirty_line, buff, &bytes_read) == NULL)
+	if (read_from_file(fd, &line_read, buff, &bytes_read) == NULL)
 		return (NULL);
-	bytes_read = handle_end_of_file(dirty_line, &bytes_read);
+	bytes_read = handle_end_of_file(line_read, &bytes_read);
 	if (bytes_read < 0)
 		return (NULL);
-	clean_line = create_clean_line(dirty_line, &dirt);
-	free(dirty_line);
-	return (clean_line);
+	next_line = create_next_line(line_read, &remaining_line);
+	free(line_read);
+	return (next_line);
 }
 
-char	*initialize_and_check_errors(int fd, char **dirt, char **buff,
-		int *bytes_read)
+static char	*initialize_and_check_errors(int fd, char **remaining_line,
+		char **buff, int *bytes_read)
 {
-	char	*dirty_line;
+	char	*line_read;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	*bytes_read = BUFFER_SIZE;
-	if ((*dirt) == NULL)
-		*dirt = ft_strdup("");
-	dirty_line = ft_strdup(*dirt);
-	free(*dirt);
-	*dirt = NULL;
+	if ((*remaining_line) == NULL)
+		*remaining_line = ft_strdup("");
+	line_read = ft_strdup(*remaining_line);
+	free(*remaining_line);
+	*remaining_line = NULL;
 	*buff = ft_calloc(1, BUFFER_SIZE + 1);
-	return (dirty_line);
+	return (line_read);
 }
 
-int	*read_from_file(int fd, char **dirty_line, char *buff, int *bytes_read)
+static int	*read_from_file(int fd, char **line_read, char *buff,
+		int *bytes_read)
 {
 	char	*temp;
 
-	while (!ft_strchr(*dirty_line, '\n') && *bytes_read == BUFFER_SIZE)
+	while (!ft_strchr(*line_read, '\n') && *bytes_read == BUFFER_SIZE)
 	{
 		*bytes_read = read(fd, buff, BUFFER_SIZE);
 		if (*bytes_read < 0)
 		{
 			free(buff);
-			free(*dirty_line);
+			free(*line_read);
 			return (NULL);
 		}
 		buff[*bytes_read] = '\0';
-		temp = *dirty_line;
-		*dirty_line = ft_strjoin(*dirty_line, buff);
+		temp = *line_read;
+		*line_read = ft_strjoin(*line_read, buff);
 		free(temp);
 	}
 	free(buff);
 	return (bytes_read);
 }
 
-int	handle_end_of_file(char *dirty_line, int *bytes_read)
+static int	handle_end_of_file(char *line_read, int *bytes_read)
 {
-	if (*bytes_read == 0 && *dirty_line == '\0')
+	if (*bytes_read == 0 && *line_read == '\0')
 	{
-		free(dirty_line);
+		free(line_read);
 		return (-1);
 	}
 	return (*bytes_read);
 }
 
-char	*create_clean_line(char *dirty_line, char **dirt)
+static char	*create_next_line(char *line_read, char **remaining_line)
 {
 	int		i;
-	char	*clean_line;
+	char	*next_line;
 
 	i = 0;
-	clean_line = ft_calloc(1, ft_strlen(dirty_line) + 1);
-	while (dirty_line[i] != '\n' && dirty_line[i] != '\0')
+	next_line = ft_calloc(1, ft_strlen(line_read) + 1);
+	while (line_read[i] != '\n' && line_read[i] != '\0')
 	{
-		clean_line[i] = dirty_line[i];
+		next_line[i] = line_read[i];
 		i++;
 	}
-	if (dirty_line[i] == '\n')
-		clean_line[i++] = '\n';
-	if (dirty_line[i] != '\0')
-		*dirt = ft_strdup(&dirty_line[i]);
+	if (line_read[i] == '\n')
+		next_line[i++] = '\n';
+	if (line_read[i] != '\0')
+		*remaining_line = ft_strdup(&line_read[i]);
 	else
-		clean_line[i] = '\0';
-	return (clean_line);
+		next_line[i] = '\0';
+	return (next_line);
 }
