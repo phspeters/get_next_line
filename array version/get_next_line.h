@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 11:50:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/29 10:47:13 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/29 15:04:45 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	*get_next_line(int fd);
 char	*initialize_and_check_errors(int fd, char **remaining_line, char **buff,
 			int *bytes_read);
 int		*read_from_file(int fd, char **line_read, char *buff, int *bytes_read);
-void	handle_end_of_file(char *line_read, int *bytes_read);
+int		is_end_of_file(char *line_read, int *bytes_read);
 char	*create_next_line(char *line_read, char **remaining_line);
 void	*ft_calloc(size_t nmemb, size_t size);
 size_t	ft_strlen(const char *str);

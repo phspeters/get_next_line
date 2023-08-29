@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/24 18:21:17 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/29 15:05:22 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (read_from_file(fd, &line_read, buff, &bytes_read) == NULL)
 		return (NULL);
-	handle_end_of_file(line_read, &bytes_read);
-	if (bytes_read < 0)
+	if (is_end_of_file(line_read, &bytes_read))
 		return (NULL);
 	next_line = create_next_line(line_read, &remaining_line[fd]);
 	free(line_read);
@@ -74,13 +73,14 @@ int	*read_from_file(int fd, char **line_read, char *buff,
 	return (bytes_read);
 }
 
-void	handle_end_of_file(char *line_read, int *bytes_read)
+int	is_end_of_file(char *line_read, int *bytes_read)
 {
 	if (*bytes_read == 0 && *line_read == '\0')
 	{
 		free(line_read);
-		*bytes_read = -1;
+		return (1);
 	}
+	return (0);
 }
 
 char	*create_next_line(char *line_read, char **remaining_line)

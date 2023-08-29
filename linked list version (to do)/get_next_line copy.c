@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/29 16:54:16 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/29 11:30:21 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,27 @@
 
 char	*get_next_line(int fd)
 {
-	char		*buff;
-	char		*line_read;
-	char		*next_line;
-	static char	*remaining_line;
-	int			bytes_read;
+	char			*buff;
+	char			*line_read;
+	char			*next_line;
+	static t_list	*list = NULL;
+	int				bytes_read;
 
-	line_read = initialize_and_check_errors(fd, &remaining_line, &buff,
+	line_read = initialize_and_check_errors(fd, &list, &buff,
 			&bytes_read);
 	if (line_read == NULL)
 		return (NULL);
 	if (read_from_file(fd, &line_read, buff, &bytes_read) == NULL)
 		return (NULL);
-	if (is_end_of_file(line_read, &bytes_read))
+	bytes_read = handle_end_of_file(line_read, &bytes_read);
+	if (bytes_read < 0)
 		return (NULL);
-	next_line = create_next_line(line_read, &remaining_line);
+	next_line = create_next_line(line_read, &list);
 	free(line_read);
 	return (next_line);
 }
 
-char	*initialize_and_check_errors(int fd, char **remaining_line,
+char	*initialize_and_check_errors(int fd, char **list,
 		char **buff, int *bytes_read)
 {
 	char	*line_read;
@@ -41,11 +42,11 @@ char	*initialize_and_check_errors(int fd, char **remaining_line,
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	*bytes_read = BUFFER_SIZE;
-	if ((*remaining_line) == NULL)
-		*remaining_line = ft_strdup("");
-	line_read = ft_strdup(*remaining_line);
-	free(*remaining_line);
-	*remaining_line = NULL;
+	if ((*list) == NULL)
+		*list = ft_strdup("");
+	line_read = ft_strdup(*list);
+	free(*list);
+	*list = NULL;
 	*buff = ft_calloc(1, BUFFER_SIZE + 1);
 	return (line_read);
 }
@@ -73,17 +74,17 @@ int	*read_from_file(int fd, char **line_read, char *buff,
 	return (bytes_read);
 }
 
-int	is_end_of_file(char *line_read, int *bytes_read)
+int	handle_end_of_file(char *line_read, int *bytes_read)
 {
 	if (*bytes_read == 0 && *line_read == '\0')
 	{
 		free(line_read);
-		return (1);
+		return (-1);
 	}
-	return (0);
+	return (*bytes_read);
 }
 
-char	*create_next_line(char *line_read, char **remaining_line)
+char	*create_next_line(char *line_read, char **list)
 {
 	int		i;
 	char	*next_line;
@@ -98,6 +99,8 @@ char	*create_next_line(char *line_read, char **remaining_line)
 	if (line_read[i] == '\n')
 		next_line[i++] = '\n';
 	if (line_read[i] != '\0')
-		*remaining_line = ft_strdup(&line_read[i]);
+		*list = ft_strdup(&line_read[i]);
+	else
+		next_line[i] = '\0';
 	return (next_line);
 }
