@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:27 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/24 18:19:14 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/29 10:47:34 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (alloc);
 }
 
-int	ft_strlen(char *str)
+size_t	ft_strlen(const char *str)
 {
 	int	len;
 
