@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
+/*   By: peters <peters@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/29 16:54:17 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/29 20:54:38 by peters           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 char	*get_next_line(int fd)
 {
 	char			*next_line;
-	static t_list	*list;
+	static t_list	*root;
 	char			*buff;
 	int				bytes_read;
 	t_list			*current;
-	t_list			*cursor;
 	int				i;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -28,9 +27,9 @@ char	*get_next_line(int fd)
 	if (!buff)
 		return (NULL);
 	bytes_read = BUFFER_SIZE;
-	if (!list)
-		list = ft_lstnew("");
-	current = list;
+	if (!root)
+		root = ft_lstnew("");
+	current = root;
 	while (ft_strchr(current->content, '\n') && bytes_read == BUFFER_SIZE)
 	{
 		bytes_read = read(fd, buff, BUFFER_SIZE);
@@ -41,26 +40,26 @@ char	*get_next_line(int fd)
 		}
 		buff[bytes_read] = '\0';
 		current = ft_lstnew(buff);
-		ft_lstadd_back(&list, current);
+		ft_lstadd_back(&root, current);
 		current = current->next;
 	}
 	free (buff);
-	while(cursor)
+	current = root;
+	while(current)
 	{
 		i = 0;
 		while(i < BUFFER_SIZE)
 		{
-			if (cursor->content[i] != '\n')
+			if (current->content[i] != '\n')
 			{
-				next_line[i] = cursor->content[i];
+				next_line[i] = current->content[i];
 				i++;
 			}
 			else
 			{
 				next_line[i++] = '\n';
 				next_line[i] = '\0';
-				content = ft_strdup(cursor->content + i);
-				new = ft_lstnew(content);
+				current = ft_lstnew(ft_strdup(current->content + i));
 			}
 		}
 		current = current->next;
