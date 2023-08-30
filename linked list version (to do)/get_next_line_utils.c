@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:27 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/29 11:21:34 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/30 18:48:30 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,47 @@ t_list	*ft_lstnew(void *content)
 	return (new_node);
 }
 
-int	ft_lstsize(t_list *lst)
+char	*ft_strchr(const char *s, int c)
 {
-	int	counter;
+	int	i;
 
-	counter = 0;
-	while (lst != NULL)
+	i = 0;
+	while (s[i])
 	{
-		counter++;
-		lst = lst->next;
+		if (s[i] == (unsigned char)c)
+			return ((char *)s + i);
+		i++;
 	}
-	return (counter);
+	if ((s[i] == (unsigned char)c))
+		return ((char *)s + i);
+	return (NULL);
+}
+
+char	*ft_strdup(const char *s)
+{
+	char	*dup;
+	int		s_size;
+	int		i;
+
+	s_size = ft_strlen((char *)s) + 1;
+	dup = malloc(sizeof(char) * s_size);
+	if (dup == NULL)
+		return (NULL);
+	i = 0;
+	while (i < s_size)
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	return (dup);
+}
+
+size_t	ft_strlen(const char *str)
+{
+	int	len;
+
+	len = 0;
+	while (str[len])
+		len++;
+	return (len);
 }

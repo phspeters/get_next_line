@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/30 20:08:17 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/30 19:41:25 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*get_next_line(int fd)
 	t_list			*temp;
 	char			*content;
 	int				i;
-	int				line_len;
+	int				j;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
@@ -31,14 +31,8 @@ char	*get_next_line(int fd)
 	if (!buff)
 		return (NULL);
 	bytes_read = BUFFER_SIZE;
-	if (!head)
-	{
-		bytes_read = read(fd, buff, BUFFER_SIZE);
-		new = ft_lstnew(ft_strdup(buff));
-		ft_lstadd_back(&head, new);
-	}
 	current = head;
-	while (!ft_strchr(current->content, '\n') && bytes_read == BUFFER_SIZE)
+	while (bytes_read == BUFFER_SIZE)
 	{
 		bytes_read = read(fd, buff, BUFFER_SIZE);
 		if (bytes_read < 0)
@@ -49,14 +43,15 @@ char	*get_next_line(int fd)
 		buff[bytes_read] = '\0';
 		new = ft_lstnew(ft_strdup(buff));
 		ft_lstadd_back(&head, new);
-		current = current->next;
+		if (ft_strchr(current->content, '\n'))
+			break ;
+		else
+			current = current->next;
 	}
 	free (buff);
-	if (bytes_read == 0 && head == NULL)
-		return (NULL);
 	current = head;
 	i = 0;
-	line_len = 0;
+	j = 0;
 	while(current->content[i] != '\n')
 	{
 		if (current->content[i] == '\0')
@@ -66,15 +61,12 @@ char	*get_next_line(int fd)
 		}
 		else
 		{
-			line_len++;
+			j++;
 			i++;
 		}
-		if(current->content[i] == '\n')
-			line_len++;
 	}
-	next_line = malloc(sizeof(char) * (line_len + 1));
+	next_line = malloc(sizeof(char) * (j + 2));
 	current = head;
-	line_len = 0;
 	while(current)
 	{
 		i = 0;
@@ -82,23 +74,23 @@ char	*get_next_line(int fd)
 		{
 			if (current->content[i] != '\n' && current->content[i] != '\0')
 			{
-				next_line[line_len] = current->content[i];
+				next_line[i] = current->content[i];
 				i++;
-				line_len++;
 			}
 			else
 			{
 				if (current->content[i] == '\n')
-					next_line[line_len++] = '\n';
-				next_line[line_len] = '\0';
+					next_line[i++] = '\n';
+				next_line[i] = '\0';
 				content = ft_strdup(current->content + i);
-				new = ft_lstnew(content);
+				current = ft_lstnew(content);
+				free (content);
 				break ;
 			}
 		}
 		current = current->next;
 	}
 	ft_lstclear(&head, free);
-	head = new;
+	head = current;
 	return (next_line);
 }
