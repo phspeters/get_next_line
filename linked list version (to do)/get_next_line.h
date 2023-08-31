@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 11:50:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/30 20:07:10 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/31 16:12:14 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 2
+#  define BUFFER_SIZE 5
 # endif
 
 # include <stdlib.h>

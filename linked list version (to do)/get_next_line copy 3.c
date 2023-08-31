@@ -6,7 +6,7 @@
 /*   By: pehenri2 <pehenri2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 15:02:24 by pehenri2          #+#    #+#             */
-/*   Updated: 2023/08/31 20:26:46 by pehenri2         ###   ########.fr       */
+/*   Updated: 2023/08/31 18:54:31 by pehenri2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,12 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
+	buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buff)
+		return (NULL);
 	bytes_read = BUFFER_SIZE;
-	//botar content como NULL?
 	if (!head)
 	{
-		buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-		if (!buff)
-			return (NULL);
 		bytes_read = read(fd, buff, BUFFER_SIZE);
 		if (bytes_read < 0)
 		{
@@ -41,17 +40,12 @@ char	*get_next_line(int fd)
 			return NULL;
 		}
 		buff[bytes_read] = '\0';
-		new = ft_lstnew(buff);
+		new = ft_lstnew(ft_strdup(buff));
 		ft_lstadd_back(&head, new);
 	}
 	current = head;
-	//verificar buffer?
-	// iniciar como NULL e colocar condição para entrar se NULL e depois sar strchr no buff
 	while (!ft_strchr(current->content, '\n') && bytes_read == BUFFER_SIZE)
 	{
-		buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-		if (!buff)
-			return (NULL);
 		bytes_read = read(fd, buff, BUFFER_SIZE);
 		if (bytes_read < 0)
 		{
@@ -60,10 +54,11 @@ char	*get_next_line(int fd)
 			return NULL;
 		}
 		buff[bytes_read] = '\0';
-		new = ft_lstnew(buff);
+		new = ft_lstnew(ft_strdup(buff));
 		ft_lstadd_back(&head, new);
 		current = current->next;
 	}
+	free (buff);
 	if (bytes_read == 0 && head->content[0] == '\0')
 	{
 		ft_lstclear(&head, free);
