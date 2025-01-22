@@ -31,7 +31,7 @@ It will not only allow you to add a very convenient function to your collection,
 
 ## 📋 Testing
 
-To compile, go to the project path and run:
+To compile, navigate to the project directory and run:
 
 ```shell
 gcc -Wall -Werror -Wextra -D BUFFER_SIZE=n main.c get_next_line.c get_next_line_utils.c
